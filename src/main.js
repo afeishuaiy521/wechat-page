@@ -11,6 +11,8 @@ import 'muse-ui/dist/muse-ui.css'
 import 'muse-ui/dist/theme-light.css'
 import 'mint-ui/lib/style.css'
 import Mint from 'mint-ui'
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
 Vue.use(Mint);
 Vue.use(MuseUI)
 Vue.use(MaterialDesignIcons)

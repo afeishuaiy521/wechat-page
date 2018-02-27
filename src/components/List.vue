@@ -62,7 +62,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
   export default {
     created(){
     },
@@ -71,24 +70,9 @@
         activeTab: 'tab1',
         bottomSheet: false,
         value: '',
-        defaultResult: [
-          'Apple',
-          'Banana',
-          'Orange',
-          'Durian',
-          'Lemon',
-          'Peach',
-          'Cherry',
-          'Berry',
-          'Core',
-          'Fig',
-          'Haw',
-          'Melon',
-          'Plum',
-          '123',
-          'Peanut',
-          'Other'
-        ],
+        apiUrl: 'http://localhost:9081/api/DiseaseGroupRela/DiseaseByNameList',
+        Name:'',
+        defaultResult: [],
         items:{
 
         }
@@ -104,6 +88,7 @@
         this.activeTab = val
       },
       handleClick (val){
+           var vm = this;
           var search = val.srcElement.innerText;
           if (search != "" && search != "取消"){
             $(".mint-search-list").hide();
@@ -116,13 +101,16 @@
               $(this).hide()
             })
           }
-        axios.post("http://localhost:9081/api/DiseaseGroupRela/DiseaseByNameList",{
-          Name:"",
-        }).then(function (res) {
-          console.log(res)
-        }).catch(function(error){
+        var sz=new Array();
+        this.$http.post(vm.apiUrl,vm.Name,{emulateJSON:true}).then((res)=> {
+          for(var i=0; i<res.data.Data.length;i++){
+            sz[i]= res.data.Data[i].Name;
+          }
+          vm.defaultResult = sz;
+        }).catch((error)=>{
           console.log(error);
         });
+
       },
       openBottomSheet:function (type) {
         if($(".fix-item a").length == 5){

@@ -16,24 +16,8 @@
     data () {
       return {
         value: '',
-        defaultResult: [
-          'Apple',
-          'Banana',
-          'Orange',
-          'Durian',
-          'Lemon',
-          'Peach',
-          'Cherry',
-          'Berry',
-          'Core',
-          'Fig',
-          'Haw',
-          'Melon',
-          'Plum',
-          '123',
-          'Peanut',
-          'Other'
-        ]
+        defaultResult: [],
+        apiUrl: 'http://localhost:9081/api/DiseaseGroupRela/JNT_DrugByDrugNameList',
       }
     },
     computed:{
@@ -50,8 +34,23 @@
             $(".mint-searchbar-core").val(search)
           }
         })
+        var vm = this;
         $(".mint-searchbar-core").keyup(function () {
           $(".mint-searchbar-core").val(this.value)
+          var sz=new Array();
+          vm.$http.post(vm.apiUrl,{
+            DrugName:this.value,
+            Limit:10,
+            Start:0
+          },{emulateJSON:true})
+            .then((res) => {
+              for(var i=0; i<res.data.Data.length;i++) {
+                sz[i] = res.data.Data[i].ProductName;
+              }
+              vm.defaultResult = sz;
+            }).catch((error)=>{
+            console.log(error);
+          });
         })
       },
     }
