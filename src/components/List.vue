@@ -62,6 +62,7 @@
 </template>
 
 <script>
+  import axios from 'axios';
   export default {
     created(){
     },
@@ -115,6 +116,13 @@
               $(this).hide()
             })
           }
+        axios.post("http://localhost:9081/api/DiseaseGroupRela/DiseaseByNameList",{
+          Name:"",
+        }).then(function (res) {
+          console.log(res)
+        }).catch(function(error){
+          console.log(error);
+        });
       },
       openBottomSheet:function (type) {
         if($(".fix-item a").length == 5){
