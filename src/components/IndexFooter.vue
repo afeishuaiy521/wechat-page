@@ -92,7 +92,7 @@
   }
   .flex-bottom{
     text-align: left;
-    padding-left: 10px;
+    padding-left: 20px;
   }
   .back-btn{
     height: 100%!important;

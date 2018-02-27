@@ -340,11 +340,13 @@
   import './../assets/css/default/layer.css'
   import './../assets/js/chat'
   import './../assets/css/font-awesome.min.css'
+  import axios from 'axios';
     export default {
       created(){
         setTimeout(function () {
           $("#sexBox").show();
           $("#choos-btn").show();
+          $(".index-footer").hide();
         },1000)
       },
       components: {IndexHeader,IndexFooter,List,Search,DrugUseMsg,ResultPage,SuccessPage},
@@ -364,34 +366,33 @@
               $(".chatBox-content-demo").append("<div class=\"clearfloat sexId1\">" +
                 "<div class=\"right\"> <div class=\"chat-message sex-text\"> " + textContent + " </div> " +
                 "<div class=\"chat-avatars\"><i class=\"mu-icon material-icons\">account_circle</i></div> </div> </div>");
+              $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight)
               //发送隐藏按钮
               $(".choos-btn").hide();
               setTimeout(function () {
                 $(".chatBox-content-demo").append(
-                  $("#ageBox").show(),
-                  $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight)
-                )
+                  $("#ageBox").show())
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight)
                 $(".chatBox-send").show();
-                $('.index-footer').show();
               },1000);
             }else {
               var textContent = $("#btn-send-woman").html();
               $(".chatBox-content-demo").append("<div class=\"clearfloat sexId2\">" +
                 "<div class=\"right\"> <div class=\"chat-message sex-text\"> " + textContent + " </div> " +
                 "<div class=\"chat-avatars\"><i class=\"mu-icon material-icons\">account_circle</i></div> </div> </div>");
+              $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
               //发送隐藏按钮
               $(".choos-btn").hide();
               setTimeout(function () {
                 $(".chatBox-content-demo").append(
-                  $("#ageBox").show(),
-                  $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight)
-                )
+                  $("#ageBox").show());
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
                 $(".chatBox-send").show();
-                $('.index-footer').show();
               },1000);
             }
         },
         checkAge(){
+          $('.index-footer').show();
           let ageNum = $("#div-textarea").val();
           if(ageNum<0 || ageNum>120){
             Toast({
@@ -487,13 +488,46 @@
            }
         },
         isShowList:function () {
-          var numSize = $(".fix-item div").length
+          axios.post('http://localhost:9081/api/DiseaseGroupRela/List',{
+            GenderType:0,
+          })
+            .then(function(response){
+
+                var id=0;
+                for(var i=0; i<response.data.Data.length;i++){
+                    if(response.data.Data[i].DiseaseGroupId != id) {
+                      id = response.data.Data[i].DiseaseGroupId;
+                      var arr = response.data.Data[i].DiseaseGroupName;
+                      var divItem = "<button class=\"mu-tab-link\" type=\"button\" tabindex=\"0\" style=\"user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;\"><div class=\"\"><div class=\"mu-ripple-wrapper\"></div> <!----> <div class=\"mu-tab-text\">" + arr + "</div></div></button>"
+                      $("#tabItem").append(divItem)
+                      $("#tabItem").children("button").eq(0).addClass("mu-tab-active")
+                    }
+                }
+
+
+                /*for(var i=0; i<response.data.Data.length;i++){
+                  var arr = response.data.Data[i].DiseaseGroupName;
+                  var divItem = "<button class=\"mu-tab-link\" type=\"button\" tabindex=\"0\" style=\"user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;\"><div class=\"\"><div class=\"mu-ripple-wrapper\"></div> <!----> <div class=\"mu-tab-text\">"+arr+"</div></div></button>"
+
+                  var divButton = $("#tabItem").append(divItem)
+                  divItem.eq(0).addClass("mu-tab-active")
+                  console.log(divItem)
+                  console.log(arr);
+                }*/
+              console.log(response.data.Data);
+            })
+            .catch(function(error){
+              console.log(error);
+            });
+
+          var numSize = $(".fix-item a").length
           if(numSize == 0){
             $("#isShowList").show()
           }
         },
 
         isShowSearch:function () {
+          $(".mint-searchbar-core").val("");
           $("#isShowSearch").show()
           $('#showMsg').css('pointer-events','auto')
         },
@@ -688,7 +722,7 @@
   }
 .choos-btn{
   position: absolute;
-  bottom: 36px;
+  bottom: 45px;
   width: 100%;
   padding: 10px 20px;
 }
@@ -715,7 +749,7 @@
 }
 .div-textarea{
   width: 70%;
-  height: 36px;
+  height: 45px;
   padding: 3px;
   outline: 0;
   border: none;
@@ -735,7 +769,7 @@
 }
   .send-btn{
     width: 30%;
-    height: 36px;
+    height: 45px;
     border: none;
     color: #fff;
     background: #0066ff;

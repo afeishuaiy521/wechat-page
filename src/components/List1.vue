@@ -9,9 +9,16 @@
     </div>
 
     <mu-row gutter>
-      <mu-tabs :value="activeTab"  id="tabItem" @change="handleTabChange">
-        <!--<mu-tab value="tab1"  title="1"/>
-        <mu-tab value="tab2"  title="2"/>-->
+      <mu-tabs :value="activeTab"  @change="handleTabChange">
+        <mu-tab value="tab1" title="常见疾病"/>
+        <mu-tab value="tab2" title="头部"/>
+        <mu-tab value="tab3" title="咽喉和颈部"/>
+        <mu-tab value="tab4" title="四肢"/>
+        <mu-tab value="tab5" title="胸部"/>
+        <mu-tab value="tab6" title="腹部"/>
+        <mu-tab value="tab7" title="腰背部"/>
+        <mu-tab value="tab8" title="泌尿生殖"/>
+        <mu-tab value="tab9" title="臀部及肛门"/>
       </mu-tabs>
       <div class="tab-box">
         <div v-if="activeTab === 'tab1'">
@@ -48,12 +55,9 @@
       </div>
     </mu-row>
     <div class="fix-box" v-show="false" id="fixBox">
-   <!--  <div class="fix-item" @click="deleteItems">
-&lt;!&ndash;       <div class="fix-item-span"><span>洒水大多</span><i class="mu-icon material-icons">close</i></div>&ndash;&gt;
-     </div>-->
-      <div class="fix-item"  id="deleteItems">
-        <!--       <div class="fix-item-span"><span>洒水大多</span><i class="mu-icon material-icons">close</i></div>-->
-      </div>
+     <div class="fix-item" @click="deleteItems">
+<!--       <div class="fix-item-span"><span>洒水大多</span><i class="mu-icon material-icons">close</i></div>-->
+     </div>
       <div class="fix-box-bottom"id="NumberDrug"@click="NumberDrug">
         <p>完成(<span id="nums"></span>个疾病)</p>
       </div>
@@ -87,10 +91,7 @@
           '123',
           'Peanut',
           'Other'
-        ],
-        items:{
-
-        }
+        ]
       }
     },
     computed:{
@@ -108,67 +109,56 @@
             $(".mint-search-list").hide();
             $(".mint-searchbar-core").val("")
             $("#fixBox").show();
-            $(".fix-item").append("<a class='fix-item-span'><span>"+search+"</span><i  class=\"mu-icon material-icons\">close</i></a>")
+            $(".fix-item").append("<div class='fix-item-span'><a>"+search+"</a><i  class=\"mu-icon material-icons\">close</i></div>")
             var num = $(".fix-item").children().length
             $("#nums").html(num)
-            $(".fix-item-span").on('click',function () {
-              $(this).hide()
-            })
           }
       },
       openBottomSheet:function (type) {
-        if($(".fix-item a").length == 5){
+        if($(".fix-item div").length == 5){
             return false;
         }
-        if(type == 1 && $(".fix-item a").length == 0) {
+        if(type == 1 && $(".fix-item div").length == 0) {
           $("#fixBox").show();
           $(".addItem" + type).addClass("active");
           var addContent = $(".addItem" + type).html();
-          $(".fix-item").append("<a class='fix-item-span' id='addItem"+type+"'><span>" + addContent + "</span><i  class=\"mu-icon material-icons\">close</i></a>")
+          $(".fix-item").append("<div class='fix-item-span' id='addItem"+type+"'><a>" + addContent + "</a><i  class=\"mu-icon material-icons\">close</i></div>")
           var num = $(".fix-item").children().length
           $("#nums").html(num)
         }else{
           var count=0;
-          for (var i=0;i<$(".fix-item a").length; i++)
+          for (var i=0;i<$(".fix-item div").length; i++)
           {
-              if($(".fix-item a")[i].id != "addItem"+type) {
+              if($(".fix-item div")[i].id != "addItem"+type) {
                   count++;
-                  if($(".fix-item a").length == count){
+                  if($(".fix-item div").length == count){
                     $("#fixBox").show();
                     $(".addItem" + type).addClass("active");
                     var addContent = $(".addItem" + type).html();
-                    $(".fix-item").append("<a class='fix-item-span' id='addItem"+type+"'><span>" + addContent + "</span><i  class=\"mu-icon material-icons\">close</i></a>")
+                    $(".fix-item").append("<div class='fix-item-span' id='addItem"+type+"'><a>" + addContent + "</a><i  class=\"mu-icon material-icons\">close</i></div>")
                     var num = $(".fix-item").children().length
                     $("#nums").html(num)
                   }
               }
           }
-          $(".fix-item-span").on('click',function () {
-            console.log(num)
-            $(this).remove()
-            $("#nums").html(num-=1)
-            if(num == 0){
-              $("#fixBox").hide();
-            }
-          })
         }
       },
-     /* deleteItems(num){
-           var aa = num.path[1];
-        aa.remove();
-           $("."+num.path[1].id).removeClass("active");
-        var nums = $(".fix-item").children().length;.
+      deleteItems(num){
+           var aa = num.path[1]
+           aa.remove()
+           $("."+num.path[1].id).removeClass("active")
+        var nums = $(".fix-item").children().length
         if(nums==0) {
           $("#fixBox").hide();
           $("#nums").html(nums)
         }else{
           $("#nums").html(nums)
         }
-      },*/
+      },
       //添加药品
       NumberDrug(){
         $("#isShowList").hide();
-        var numSize = $(".fix-item a").length
+        var numSize = $(".fix-item div").length
 
         var a="<div class='clearfloat'> <div class='right'> <div class='chat-message drug-text'> ";
         for(var i = 0;i < numSize; i++) {
@@ -234,7 +224,7 @@
   }
   .list .mint-search-list{
     z-index: 999;
-    margin-top: 54px;
+    margin-top: 44px;
     padding-top: 0;
     background: #fff;
   }
@@ -311,8 +301,9 @@
     margin-right: 10px;
     margin-bottom: 10px;
     display: inline-block;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+  }
+  .fix-item-span a{
+    color: #0265fe;
   }
   .fix-item-span i{
     vertical-align: middle;

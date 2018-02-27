@@ -20,12 +20,6 @@
             <span class="icon-question fa fa-question-circle"></span>
           </div>-->
         </section>
-        <!--<section class="result-drug-use-det">
-          <h5>氨茶碱缓释片（阿咪康）50mg*6袋/盒</h5>
-          <p><span>氨茶碱缓释片（阿咪康）50mg*6袋/盒</span></p>
-          <hr class="line-after">
-          <span class="icon-success fa fa-check-circle"></span>
-        </section>-->
       </section>
       <section class="result-msg">
         <h4><span>&nbsp</span>分析结果</h4>
@@ -52,6 +46,9 @@
         <p class="bottom-tip">请联系家庭医生或者药师获得专业建议，避免用药风险。</p>
       </section>
     </div>
+    <div class="result-bottom">
+      <mu-raised-button @click="BackResult" label="返回" fullWidth/>
+    </div>
   </div>
 </template>
 
@@ -65,7 +62,13 @@
 
               }
             }
+        },
+      methods:{
+        BackResult(){
+          $("#isShowResultPage").hide()
         }
+      }
+
     }
 </script>
 
@@ -132,7 +135,7 @@
   .result-item{
     background: #fff;
     margin-top: 10px;
-    padding: 15px;
+    padding: 15px 15px 100px 15px;
   }
 .result-msg{
   margin-top: 10px;
@@ -224,4 +227,15 @@
     padding-left: 10px;
     margin-top: 10px;
   }
+  .result-bottom{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+  }
+.result-bottom .mu-raised-button{
+  height: 45px!important;
+  background: #0066ff!important;
+  color: #fff!important;
+}
 </style>

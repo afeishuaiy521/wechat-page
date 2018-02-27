@@ -2,6 +2,7 @@
   <div class="search">
     <div class="list-top">
       <mt-search
+        autofocus
         v-model="value"
         cancel-text="确定"
         placeholder="搜索" :result="filterResult1"   @click.native="handleClick1">
@@ -41,16 +42,17 @@
       }
     },
     methods: {
-      handleClick1 (val){
+      handleClick1 (){
         $('#drugSearch').css('pointer-events','none')
-        var search = val.srcElement.innerText;
-        var search2 = val.path[0]._value
-
-        if (search != "" && search != "确定"){
-          $(".mint-searchbar-core").val(search)
-        }else{
-          $(".mint-searchbar-core").val(search2)
-        }
+        $(".list-top").on("click",".mint-cell-wrapper",function () {
+          var search = $(this).children("div").eq(0).children().html()
+          if (search != ""){
+            $(".mint-searchbar-core").val(search)
+          }
+        })
+        $(".mint-searchbar-core").keyup(function () {
+          $(".mint-searchbar-core").val(this.value)
+        })
       },
     }
   }
@@ -73,5 +75,8 @@
 }
 .search .mint-search{
   height:100%;
+}
+.search .mint-searchbar-inner{
+  height: 36px;
 }
 </style>

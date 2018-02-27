@@ -218,6 +218,7 @@ $(function () {
     }
   })
   $("#isShowResult").click(function () {
+    $(".index-footer").hide();
     for (var i= 1; i<sss; i++) {
       let mseUseDiv = "<div class='drugItem'><h5><span id='drugName"+i+"'></span>50mg*6袋/盒</h5>"+
         "<p><span>用法用量：每日<small id='everydayCount"+i+"'></small>，每次：<small id='everyNum"+i+"'></small>,<small id='useType"+i+"'></small></span></p>"+
@@ -284,13 +285,33 @@ $(function () {
   })*/
   //重新用药审查
   $("#initQuesion").click(function () {
-    $(".bottom-tip-box").hide()
-    $("#nums").html("0")
-    $(".fix-item").html("")
+    $(".bottom-tip-box").hide();
+    $("#nums").html("0");
+    $(".fix-item").html("");
     $(".tab-box p span").removeClass("active");
+    $('#showMsg').css('pointer-events','auto');
+    $('#drugSearch').css('pointer-events','auto');
     $("#fixBox").hide();
-    $(".index-footer").hide()
-    $(".chatBox-content-demo").append($("#sexBox").show(), $("#choos-btn").show())
+    $(".index-footer").hide();
+    $(".chatBox-content-demo").append($("#sexBox").show(), $("#choos-btn").show());
     $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
   })
 })
+//删除疾病
+/*$(".fix-item").on("click ",function () {
+  alert("1")
+  var del = $(this).children("div").html()
+  console.log(del)
+
+  var nums = $(".fix-item").children().length;
+  if(nums==0) {
+    $("#fixBox").hide();
+    $("#nums").html(nums)
+  }else{
+    $("#nums").html(nums)
+  }
+})*/
+/*$(".fix-item-span").on("click",function(){
+  console.log("11")
+});*/
+

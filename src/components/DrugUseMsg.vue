@@ -248,4 +248,8 @@
 .drug-use-msg .picker-center-highlight:before,.drug-use-msg .picker-center-highlight:after{
   background-color: #ccc;
 }
+  .drug-msg-btn .mu-raised-button{
+    height: 40px;
+    line-height: 40px;
+  }
 </style>
