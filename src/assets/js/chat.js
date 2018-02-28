@@ -3,7 +3,6 @@
  */
 $(function () {
   var sss =1;
-
   function auto_height() {
     var h = document.documentElement.clientHeight - 92;
     var high = document.getElementById("chatBox-info");
@@ -314,4 +313,5 @@ $(function () {
 /*$(".fix-item-span").on("click",function(){
   console.log("11")
 });*/
+//滑动加载
 

@@ -1,12 +1,12 @@
 <template>
   <div class="drug-use-msg">
     <div class="msg-form">
-      <mt-field label="药物名称"disableClear readonly></mt-field>
-      <mt-field label="用法" disableClear placeholder="请选择" @click.native="handBottom" state="close"readonly></mt-field>
+      <mt-field label="药物名称" disableClear readonly></mt-field>
+      <mt-field label="用法" disableClear placeholder="请选择" @click.native="handBottom" state="close" readonly></mt-field>
       <span class="fa fa-angle-right"></span>
       <mt-field label="每次用量" disableClear placeholder="请输入用量"></mt-field>
       <a @click="UnitBtn">
-        <span class="drugUnit">mg</span>
+        <span class="drugUnit"></span>
         <span class="fa fa-angle-right"></span>
       </a>
 
@@ -40,25 +40,45 @@
 </template>
 
 <script>
-  import { Toast } from 'mint-ui';
-  import { Indicator } from 'mint-ui';
-    export default {
-        name: '',
-        data () {
-            return {
-                msg: '',
-              popupVisible:false,
-              popupUnit:false,
-              slots:[{values: ['口服', '外用']}],
-              Unit:[{values: ['mg', 'g','片', '颗']}]
-            }
-        },
-        methods:{
-          handBottom:function () {
-            this.popupVisible = true
-            $("#showUse").show()
+import { Toast } from "mint-ui";
+import { Indicator } from "mint-ui";
+export default {
+  name: "",
+  data() {
+    return {
+      msg: "",
+      popupVisible: false,
+      popupUnit: false,
+      slots: [{ values: [] }],
+      Unit: [{ values: [] }]
+    };
+  },
+  methods: {
+    handBottom: function() {
+      var vm = this;
+      var sz = new Array();
+      this.popupVisible = true;
+      $("#showUse").show();
+      //给药途径
+      this.$http
+        .post(
+          "http://localhost:9081/api/DiseaseGroupRela/JNT_DrugAttrList",
+          {
+            AttrType: 30
           },
-          /*saveDrugMsg(){
+          { emulateJSON: true }
+        )
+        .then(res => {
+          for (var i = 0; i < res.body.Data.length; i++) {
+            sz[i] = res.body.Data[i].JntDrugsAttrName;
+          }
+          vm.slots[0].values = sz;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    /*saveDrugMsg(){
             let sss =1;
             var msg = {};
             msg.msg1 = $(".mint-field-core").eq(0).val();
@@ -130,126 +150,150 @@
               )
             })
           },*/
-          cancelBtn(){
-            this.popupVisible = false
+    cancelBtn() {
+      this.popupVisible = false;
+    },
+    yesBtn() {
+      this.popupVisible = false;
+      let popupText = $("#showUse .picker-item.picker-selected").html();
+      let popupText1 = $.trim(popupText);
+      $(".mint-field-core")
+        .eq(1)
+        .val(popupText1);
+    },
+    UnitBtn() {
+       var vm = this;
+      var sz = new Array();
+      this.popupUnit = true;
+      //给药单位
+      this.$http
+        .post(
+          "http://localhost:9081/api/DiseaseGroupRela/JNT_DrugAttrList",
+          {
+            AttrType: 40
           },
-          yesBtn(){
-            this.popupVisible = false;
-            let popupText = $("#showUse .picker-item.picker-selected").html();
-            let popupText1 = $.trim(popupText);
-            $(".mint-field-core").eq(1).val(popupText1)
-          },
-          UnitBtn(){
-            this.popupUnit = true
-          },
-          cancelUnit(){
-            this.popupUnit = false
-          },
-          yesBtnUnit(){
-            this.popupUnit = false;
-            let popupText = $("#showUnit .picker-item.picker-selected").html();
-            let popupText1 = $.trim(popupText);
-            $(".drugUnit").html(popupText1)
-          },
-          backBtnMsg(){
-              $("#isShowMsg").hide()
+          { emulateJSON: true }
+        )
+        .then((res) => {
+           for (var i = 0; i < res.body.Data.length; i++) {
+            sz[i] = res.body.Data[i].JntDrugsAttrName;
           }
-        }
+          console.log(res);
+          vm.Unit[0].values = sz;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    cancelUnit() {
+      this.popupUnit = false;
+    },
+    yesBtnUnit() {
+      this.popupUnit = false;
+      let popupText = $("#showUnit .picker-item.picker-selected").html();
+      let popupText1 = $.trim(popupText);
+      $(".drugUnit").html(popupText1);
+    },
+    backBtnMsg() {
+      $("#isShowMsg").hide();
     }
+  }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.drug-use-msg{
+.drug-use-msg {
   background: #fff;
   position: fixed;
   width: 100%;
   bottom: 0;
-  top:0;
+  top: 0;
   z-index: 9;
 }
-.drug-msg-btn{
+.drug-msg-btn {
   padding: 20px;
   text-align: center;
 }
-.drug-msg-btn .mu-raised-button:last-child{
+.drug-msg-btn .mu-raised-button:last-child {
   background: #0066ff;
   color: #fff;
 }
-.drug-msg-btn .mu-raised-button:last-child{
+.drug-msg-btn .mu-raised-button:last-child {
   color: #fff;
 }
-.drugUnit{
+.drugUnit {
   position: absolute;
   z-index: 99;
   margin-top: -37px;
   right: 40px;
   color: rgba(0, 0, 0, 0.87);
 }
-.drugNum{
+.drugNum {
   position: absolute;
   z-index: 99;
   margin-top: -37px;
   right: 40px;
   color: rgba(0, 0, 0, 0.87);
 }
-.font-name-1{
-  font-size: 18px!important;
+.font-name-1 {
+  font-size: 18px !important;
   font-weight: bold;
 }
-.drug-use-msg .mint-field-core{
+.drug-use-msg .mint-field-core {
   font-size: 14px;
 }
-.drug-use-msg .fa{
+.drug-use-msg .fa {
   position: absolute;
   z-index: 99;
   margin-top: -33px;
   right: 20px;
   color: rgba(0, 0, 0, 0.87);
 }
-.drug-use-msg .mint-field .mint-cell-title{
+.drug-use-msg .mint-field .mint-cell-title {
   width: 80px;
 }
-.drug-use-msg .mint-popup{
+.drug-use-msg .mint-popup {
   width: 100%;
 }
-.bottom-header{
+.bottom-header {
   padding-top: 3px;
 }
-.bottom-header button{
+.bottom-header button {
   background: transparent;
   border: none;
   color: #0265fe;
 }
-.bottom-header button:last-child{
+.bottom-header button:last-child {
   float: right;
 }
-.drug-use-msg .picker-item{
+.drug-use-msg .picker-item {
   font-size: 16px;
 }
 .drug-use-msg .picker-toolbar {
   height: 30px;
   background: #fff;
 }
-.drug-use-msg .mint-cell-wrapper{
+.drug-use-msg .mint-cell-wrapper {
   border-bottom: 1px solid #eee;
 }
-  .msg-form{
-    padding: 5px;
-  }
-  .drug-use-msg .picker{
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-  }
-.drug-use-msg .picker-items{
+.msg-form {
+  padding: 5px;
+}
+.drug-use-msg .picker {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.drug-use-msg .picker-items {
   background: #eee;
 }
-.drug-use-msg .picker-center-highlight:before,.drug-use-msg .picker-center-highlight:after{
+.drug-use-msg .picker-center-highlight:before,
+.drug-use-msg .picker-center-highlight:after {
   background-color: #ccc;
 }
-  .drug-msg-btn .mu-raised-button{
-    height: 40px;
-    line-height: 40px;
-  }
+.drug-msg-btn .mu-raised-button {
+  height: 40px;
+  line-height: 40px;
+}
 </style>

@@ -626,29 +626,6 @@ export default {
       $(".mint-field .mint-cell-value")
         .eq(0)
         .addClass("font-name-1");
-        //给药途径
-      this.$http
-        .post("http://localhost:9081/api/DiseaseGroupRela/JNT_DrugAttrList", {
-          AttrType: 30
-        },{ emulateJSON: true })
-        .then(function(res) {
-          console.log(res);
-          //给药单位
-        this.$http
-        .post("http://localhost:9081/api/DiseaseGroupRela/JNT_DrugAttrList", {
-          AttrType: 40
-        },{ emulateJSON: true })
-        .then(function(res) {
-          console.log(res);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-        
     },
     //分析详情
     isShowResultPage(text) {
