@@ -16,7 +16,7 @@ export default {
     position: absolute;
     top: 0;
     bottom: 0;
-    overflow: hidden;
+    overflow:hidden
   }
 
 </style>

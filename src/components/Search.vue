@@ -59,6 +59,7 @@ export default {
     },
     handleClick1() {
       $(".mint-search-list").wrap("<mt-loadmore  v-if=\"isShow\" :bottom-method=\"loadBottom\" :bottom-all-loaded=\"allLoaded\" ref=\"loadmore\" :autoFill=\"autofill\"></mt-loadmore>")
+      
       $("#drugSearch").css("pointer-events", "none");
       $(".list-top").on("click", ".mint-cell-wrapper", function() {
         var search = $(this)

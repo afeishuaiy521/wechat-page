@@ -544,68 +544,6 @@ export default {
       }
     },
     isShowList: function() {
-      this.$http
-        .post(
-          "http://localhost:9081/api/DiseaseGroupRela/List",
-          { GenderType: 1 },
-          { emulateJSON: true }
-        )
-        .then(
-          function(res) {
-            // 处理成功的结果
-            var id = 0;
-            for (var i = 0; i < res.data.Data.length; i++) {
-              if (res.data.Data[i].DiseaseGroupId != id) {
-                id = res.data.Data[i].DiseaseGroupId;
-                var arr = res.data.Data[i].DiseaseGroupName;
-                var divItem =
-                  '<button class="mu-tab-link" type="button" tabindex="0" style="user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;"><div class=""><div class="mu-ripple-wrapper"></div> <!----> <div class="mu-tab-text">' +
-                  arr +
-                  "</div></div></button>";
-                $("#tabItem").append(divItem);
-                $("#tabItem")
-                  .children("button")
-                  .eq(0)
-                  .addClass("mu-tab-active");
-              }
-            }
-          },
-          function(res) {
-            // 处理失败的结果
-          }
-        );
-      /* axios.post('http://localhost:9081/api/DiseaseGroupRela/List',{
-            GenderType:1,
-          })
-            .then(function(response){
-
-                var id=0;
-                for(var i=0; i<response.data.Data.length;i++){
-                    if(response.data.Data[i].DiseaseGroupId != id) {
-                      id = response.data.Data[i].DiseaseGroupId;
-                      var arr = response.data.Data[i].DiseaseGroupName;
-                      var divItem = "<button class=\"mu-tab-link\" type=\"button\" tabindex=\"0\" style=\"user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;\"><div class=\"\"><div class=\"mu-ripple-wrapper\"></div> <!----> <div class=\"mu-tab-text\">" + arr + "</div></div></button>"
-                      $("#tabItem").append(divItem)
-                      $("#tabItem").children("button").eq(0).addClass("mu-tab-active")
-                    }
-                }
-
-
-                /!*for(var i=0; i<response.data.Data.length;i++){
-                  var arr = response.data.Data[i].DiseaseGroupName;
-                  var divItem = "<button class=\"mu-tab-link\" type=\"button\" tabindex=\"0\" style=\"user-select: none; outline: none; cursor: pointer; -webkit-appearance: none;\"><div class=\"\"><div class=\"mu-ripple-wrapper\"></div> <!----> <div class=\"mu-tab-text\">"+arr+"</div></div></button>"
-
-                  var divButton = $("#tabItem").append(divItem)
-                  divItem.eq(0).addClass("mu-tab-active")
-                  console.log(divItem)
-                  console.log(arr);
-                }*!/
-              console.log(response.data.Data);
-            })
-            .catch(function(error){
-              console.log(error);
-            });*/
-
       var numSize = $(".fix-item a").length;
       if (numSize == 0) {
         $("#isShowList").show();
