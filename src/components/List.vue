@@ -7,62 +7,19 @@
         placeholder="搜索" :result="filterResult" autofocus @click.native="handleClick">
       </mt-search>
     </div>
-
-    <!--<mu-row gutter>
-      <mu-tabs :value="activeTab"  id="tabItem" @change="handleTabChange">
-        <mu-tab value="tab1"  id="tab1" />
-        <mu-tab value="tab2"  title="2"/>
-      </mu-tabs>
-      <div class="tab-box">
-        <div v-if="activeTab === 'tab1'">
-          <p>
-            <span class="addItem1" @click="openBottomSheet(1)">这是第一个 tab</span>
-
-          </p>
-          <p>
-            <span class="addItem2" @click="openBottomSheet(2)">haha</span>
-          </p>
-          <p>
-            <span class="addItem3" @click="openBottomSheet(3)">这是第一个 tab</span>
-          </p>
-          <p>
-          <span class="addItem4" @click="openBottomSheet(4)">这是</span>
-          </p>
-          <p>
-            <span class="addItem5" @click="openBottomSheet(5)">这是1</span>
-          </p>
-          <p>
-            <span class="addItem6" @click="openBottomSheet(6)">这是2</span>
-          </p>
-        </div>
-        <div v-if="activeTab === 'tab2'">
-          <p>
-            这是第二个 tab
-          </p>
-        </div>
-        <div v-if="activeTab === 'tab3'">
-          <p>
-            这是第三个 tab
-          </p>
-        </div>
-      </div>
-    </mu-row>-->
     <div class="list-container">
       <div class="nav-list">
         <mt-button size="small" :class="{activeTab:index==nowIndex}" v-for="(item,index) in tabText" :key="index"
-                   @click.native="activer(index)">{{item.text}}
+                   @click.native="activer(index)">{{item}}
         </mt-button>
       </div>
       <mt-tab-container v-model="active" class="tab-container">
-        <mt-tab-container-item v-show="nowIndex===ins">
-          <mt-cell  v-for="(n,index) in tabRightText" :class="addItem" @click.native="openBottomSheet()" :key="index">{{n.rightText}}</mt-cell>
+        <mt-tab-container-item :class="{activeTab:index==nowIndex, item:true}" :id="groupId" v-show="nowIndex === index"
+                               v-for="(item,index) in tabText" :key="index">
+          <mt-cell :class="addItem" @click.native="openBottomSheet()" v-for="right,index in tabRightText" :key="index">
+            {{right}}
+          </mt-cell>
         </mt-tab-container-item>
-       <!-- <mt-tab-container-item v-show="nowIndex===1">
-          <mt-cell v-for="(n,index) in 5" :key="index">222</mt-cell>
-        </mt-tab-container-item>
-        <mt-tab-container-item v-show="nowIndex===2">
-          <mt-cell v-for="(n,index) in 7"  :key="index">333</mt-cell>
-        </mt-tab-container-item>-->
       </mt-tab-container>
     </div>
     <div class="fix-box" v-show="false" id="fixBox">
@@ -80,7 +37,7 @@
 </template>
 
 <script>
-  import {TabContainer, TabContainerItem} from "mint-ui";
+  import {Indicator} from 'mint-ui';
   export default {
     mounted() {
       this.showlist();
@@ -92,7 +49,6 @@
         apiUrl: "http://localhost:9081/api/DiseaseGroupRela/DiseaseByNameList",
         Name: "",
         defaultResult: [],
-        ins: 0,
         active: "tab-container",
         tabText: [],
         tabRightText: [],
@@ -100,7 +56,8 @@
         index: "",
         type: "",
         nowIndex: 0,
-        addItem:"addTtem"
+        addItem: "addTtem",
+        groupId: 0
       };
     },
     computed: {
@@ -115,7 +72,6 @@
         var vm = this;
         var sz = new Array();
         var arr = new Array();
-        var arr1 = new Array();
 
         this.$http
           .post(
@@ -126,44 +82,60 @@
           .then(res => {
             // 处理成功的结果
             var id = 0;
+            var Num = 0;
+            var dname = new Array();
             for (var i = 0; i < res.data.Data.length; i++) {
               if (res.data.Data[i].DiseaseGroupId != id) {
                 id = res.data.Data[i].DiseaseGroupId;
-                sz[i] = res.data.Data[i].DiseaseGroupName;
-                arr1[i] = res.data.Data[i].DiseaseName;
-                vm.tabText.push({text: sz[i]});
-                if(id){
-                  vm.tabRightText.push(i)
-                }
-
-//                vm.addTtem = "addTtem"+id;
+                sz[Num] = res.data.Data[i].DiseaseGroupId;
+                dname[Num] = res.data.Data[i].DiseaseGroupName;
+                Num++;
               }
-
-              //获取右边数据
-              if (res.data.Data[i].DiseaseGroupId) {
-                arr[i] = res.data.Data[i].DiseaseName;
-                vm.tabRightText.push({rightText: arr[i]})
-              }
-
             }
+
+            var k = 0;
+            for (var i = 0; i < res.data.Data.length; i++) {
+              if (sz[0] == res.data.Data[i].DiseaseGroupId) {
+                arr[k] = res.data.Data[i].DiseaseName;
+                k++;
+              }
+            }
+
+            vm.tabText = dname;
+            vm.tabRightText = arr;
+            vm.groupId = sz;
           })
           .catch(res => {
           });
       },
       activer(index){
         this.nowIndex = index;
-
+        var vm = this;
+        var arr = new Array();
         this.$http
           .post(
             "http://localhost:9081/api/DiseaseGroupRela/List",
             {GenderType: 1},
-            {emulateJSON: true}
+            {
+              emulateJSON: true, before: ( () => {
+              Indicator.open();
+            })
+            }
           ).then(res => {
+          Indicator.close();
+          var k = 0;
+          for (var i = 0; i < res.data.Data.length; i++) {
+            if (vm.groupId[index] == res.data.Data[i].DiseaseGroupId) {
+              arr[k] = res.data.Data[i].DiseaseName;
+              k++;
+            }
+          }
+          vm.tabRightText = arr;
         })
       },
       /*handleTabChange(val) {
-        this.activeTab = val;
-      },*/
+       this.activeTab = val;
+       },*/
       handleClick(val) {
         var vm = this;
         var search = val.srcElement.innerText;
@@ -195,9 +167,10 @@
             console.log(error);
           });
       },
-      openBottomSheet(type) {
-          var vm = this
-
+      openBottomSheet(val) {
+        var vm = this
+        var type = 0
+        console.log(val)
         if ($(".fix-item a").length == 0) {
           $("#fixBox").show();
           $(".addItem" + type).children().eq(1).addClass("active");
@@ -295,6 +268,7 @@
     width: 100%;
     bottom: 0;
     top: 0;
+    overflow: auto;
   }
 
   .list .mint-search-list {
@@ -316,37 +290,8 @@
     height: 100%;
   }
 
-  .list .mu-tabs {
-    flex-direction: column;
-    width: 30%;
-    background: #fff;
-  }
-
-  .list .mu-tab-text {
-    color: #000000;
-    font-weight: 500;
-  }
-
-  .list .mu-tab-link {
-    border-bottom: 1px solid #e5e5e5;
-    border-right: 1px solid #e5e5e5;
-    width: 100%;
-  }
-
-  .list .mu-tab-link.mu-tab-active {
-    border-right: 1px solid transparent;
-  }
-
-  .list .mu-tab-active .mu-tab-text {
-    color: #0265fe;
-  }
-
   .tab-box {
     width: 70%;
-  }
-
-  .mu-tab-link-highlight {
-    display: none;
   }
 
   .tab-box p {
@@ -366,12 +311,17 @@
 
   .list-top {
     background: #eee;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999;
   }
 
-  .mu-bottom-sheet {
-    background-color: #000;
-    opacity: 0.5;
-    height: 200px;
+  .list-container {
+    margin-top: 52px;
+    padding-bottom: 200px;
+    min-height: 570px;
   }
 
   .fix-box {
@@ -426,12 +376,12 @@
   }
 
   .list .nav-list {
-    width: 25%;
+    width: 26%;
     float: left;
   }
 
   .list .tab-container {
-    width: 75%;
+    width: 74%;
   }
 
   .list .mint-button {
@@ -440,8 +390,11 @@
     border-radius: 0;
     background: #fff;
     border-right: 1px solid #e2e2e2;
+    border-bottom: 1px solid #e2e2e2;
   }
-
+  .list .mint-button--default{
+    box-shadow: none;
+  }
   .list .activeTab {
     border-right: transparent 1px solid;
     color: #0066ff;

@@ -1,15 +1,19 @@
 <template>
   <div class="search">
     <div class="list-top">
-      <mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :autoFill="autofill">
+
         <mt-search
         autofocus
         v-model="value"
         cancel-text="确定"
         placeholder="搜索" :result="filterResult1"   @click.native="handleClick1">
       </mt-search>
-      </mt-loadmore>
-      
+        <!--<mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :autoFill="autofill"
+                      :bottomPullText='bottomText'
+        >
+          <div class="mint-search-list" style="display: none"></div>
+        </mt-loadmore>-->
+
     </div>
   </div>
 </template>
@@ -24,12 +28,11 @@ export default {
       apiUrl:
         "http://localhost:9081/api/DiseaseGroupRela/JNT_DrugByDrugNameList",
       allLoaded: false, //是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
-      scrollMode: "touch", //移动端弹性滚动效果，touch为弹性滚动，auto是非弹性滚动
-      autofill: true
+      scrollMode: "auto", //移动端弹性滚动效果，touch为弹性滚动，auto是非弹性滚动
+      autofill: true,
+      bottomText:"加载中"
     };
   },
-  template:
-    '<mt-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :autoFill="autofill"></mt-loadmore>',
   mounted() {},
   components: {
     "v-loadmore": Loadmore // 为组件起别名，vue转换template标签时不会区分大小写，例如：loadMore这种标签转换完就会变成loadmore，容易出现一些匹配问题
@@ -58,8 +61,8 @@ export default {
       }
     },
     handleClick1() {
-      $(".mint-search-list").wrap("<mt-loadmore  v-if=\"isShow\" :bottom-method=\"loadBottom\" :bottom-all-loaded=\"allLoaded\" ref=\"loadmore\" :autoFill=\"autofill\"></mt-loadmore>")
-      
+//      $(".mint-search-list").wrap("<mt-loadmore  v-if=\"isShow\" :bottom-method=\"loadBottom\" :bottom-all-loaded=\"allLoaded\" ref=\"loadmore\" :autoFill=\"autofill\"></mt-loadmore>")
+
       $("#drugSearch").css("pointer-events", "none");
       $(".list-top").on("click", ".mint-cell-wrapper", function() {
         var search = $(this)
@@ -141,7 +144,7 @@ export default {
                         {
                           DrugName: this.value,
                           Limit: 10,
-                          Start: pageSize+10
+                          Start: pageSize
                         },
                         { emulateJSON: true }
                       )
@@ -151,6 +154,7 @@ export default {
                         }
                         vm.defaultResult = sz;
                       });
+                    console.log("11")
                     break;
                   default:
                 }

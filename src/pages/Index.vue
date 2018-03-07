@@ -915,7 +915,7 @@ export default {
 }
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
@@ -924,8 +924,8 @@ export default {
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: #c9c9c9;
-  -webkit-box-shadow: #c9c9c9;
+  background: #eee;
+  -webkit-box-shadow: #eee;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
   background: #eee;
