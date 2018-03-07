@@ -13,10 +13,12 @@
                    @click.native="activer(index)">{{item}}
         </mt-button>
       </div>
-      <mt-tab-container v-model="active" class="tab-container">
-        <mt-tab-container-item :class="{activeTab:index==nowIndex, item:true}" :id="groupId" v-show="nowIndex === index"
+      <mt-tab-container class="tab-container">
+        <mt-tab-container-item :class="{activeTab:index==nowIndex}" :id="groupId" v-show="nowIndex === index"
                                v-for="(item,index) in tabText" :key="index">
-          <mt-cell :class="addItem" @click.native="openBottomSheet()" v-for="right,index in tabRightText" :key="index">
+          <mt-cell :class="addItem+index" @click.native.prevent="openBottomSheet(index,$event)"
+                   v-for="right,index in tabRightText"
+                   :key="index">
             {{right}}
           </mt-cell>
         </mt-tab-container-item>
@@ -49,15 +51,13 @@
         apiUrl: "http://localhost:9081/api/DiseaseGroupRela/DiseaseByNameList",
         Name: "",
         defaultResult: [],
-        active: "tab-container",
         tabText: [],
         tabRightText: [],
         tabItems: [],
-        index: "",
-        type: "",
         nowIndex: 0,
         addItem: "addTtem",
-        groupId: 0
+        groupId: 0,
+        type: 0
       };
     },
     computed: {
@@ -167,54 +167,64 @@
             console.log(error);
           });
       },
-      openBottomSheet(val) {
-        var vm = this
-        var type = 0
-        console.log(val)
-        if ($(".fix-item a").length == 0) {
-          $("#fixBox").show();
-          $(".addItem" + type).children().eq(1).addClass("active");
+      openBottomSheet(index, ev) {
+        var vm = this;
+        $("#fixBox").show();
+        var rightText = ev.target.innerText;
+        $(".fix-item").append(
+          "<a class='fix-item-span'><span>" +
+          rightText +
+          '</span><i  class="mu-icon material-icons">close</i></a>'
+        );
+        var num = $(".fix-item").children().length;
+        $("#nums").html(num);
 
-          var addContent = $(".addItem" + type).html();
-          $(".fix-item").append(
-            "<a class='fix-item-span' id='addItem" +
-            type +
-            "'><span>" +
-            addContent +
-            '</span><i  class="mu-icon material-icons">close</i></a>'
-          );
-          var num = $(".fix-item").children().length;
-          $("#nums").html(num);
-        } else {
-          var count = 0;
-          for (var i = 0; i < $(".fix-item a").length; i++) {
-            if ($(".fix-item a")[i].id != "addItem" + type) {
-              count++;
-              if ($(".fix-item a").length == count) {
-                $("#fixBox").show();
-                $(".addItem" + type).addClass("active");
-                var addContent = $(".addItem" + type).html();
-                $(".fix-item").append(
-                  "<a class='fix-item-span' id='addItem" +
-                  type +
-                  "'><span>" +
-                  addContent +
-                  '</span><i  class="mu-icon material-icons">close</i></a>'
-                );
-                var num = $(".fix-item").children().length;
-                $("#nums").html(num);
-              }
-            }
-          }
-          $(".fix-item-span").on("click", function () {
-            console.log(num);
-            $(this).remove();
-            $("#nums").html((num -= 1));
-            if (num == 0) {
-              $("#fixBox").hide();
-            }
-          });
-        }
+        var abc = $(".addTtem"+index).children("div").children("div").eq(1).addClass("rightactive")
+        console.log(abc)
+        /* if ($(".fix-item a").length == 0) {
+         $("#fixBox").show();
+         $(".addItem" + type).children().eq(1).addClass("active");
+
+         var addContent = $(".addItem" + type).html();
+         $(".fix-item").append(
+         "<a class='fix-item-span' id='addItem" +
+         type +
+         "'><span>" +
+         addContent +
+         '</span><i  class="mu-icon material-icons">close</i></a>'
+         );
+         var num = $(".fix-item").children().length;
+         $("#nums").html(num);
+         } else {
+         var count = 0;
+         for (var i = 0; i < $(".fix-item a").length; i++) {
+         if ($(".fix-item a")[i].id != "addItem" + type) {
+         count++;
+         if ($(".fix-item a").length == count) {
+         $("#fixBox").show();
+         $(".addItem" + type).addClass("active");
+         var addContent = $(".addItem" + type).html();
+         $(".fix-item").append(
+         "<a class='fix-item-span' id='addItem" +
+         type +
+         "'><span>" +
+         addContent +
+         '</span><i  class="mu-icon material-icons">close</i></a>'
+         );
+         var num = $(".fix-item").children().length;
+         $("#nums").html(num);
+         }
+         }
+         }
+         $(".fix-item-span").on("click", function () {
+         console.log(num);
+         $(this).remove();
+         $("#nums").html((num -= 1));
+         if (num == 0) {
+         $("#fixBox").hide();
+         }
+         });
+         }*/
       },
       /* deleteItems(num){
        var aa = num.path[1];
@@ -273,9 +283,11 @@
 
   .list .mint-search-list {
     z-index: 999;
-    margin-top: 54px;
-    padding-top: 0;
+    margin-top: 52px;
     background: #fff;
+    padding-top: 0;
+    padding-bottom: 300px;
+    position: fixed;
   }
 
   .list .mint-searchbar {
@@ -309,19 +321,20 @@
     border-radius: 50px;
   }
 
-  .list-top {
+  .list .list-top {
     background: #eee;
-    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
-    z-index: 999;
+    position: fixed;
+    z-index: 1;
   }
 
-  .list-container {
-    margin-top: 52px;
+  .list .list-container {
     padding-bottom: 200px;
     min-height: 570px;
+    position: absolute;
+    margin-top: 52px;
   }
 
   .fix-box {
@@ -332,6 +345,8 @@
     background: rgba(0, 0, 0, 0.51);
     height: 200px;
     z-index: 9999;
+    overflow: auto;
+    padding-bottom: 40px;
   }
 
   .fix-item-span {
@@ -361,7 +376,7 @@
     width: 100%;
     padding: 10px;
     background: #0066ff;
-    position: absolute;
+    position: fixed;
     bottom: 0;
   }
 
@@ -392,9 +407,11 @@
     border-right: 1px solid #e2e2e2;
     border-bottom: 1px solid #e2e2e2;
   }
-  .list .mint-button--default{
+
+  .list .mint-button--default {
     box-shadow: none;
   }
+
   .list .activeTab {
     border-right: transparent 1px solid;
     color: #0066ff;
@@ -425,5 +442,12 @@
   .tab-container .mint-cell-value {
     color: #222;
     font-size: 14px
+  }
+
+  .rightactive {
+    background: #e6efff;
+    color: #0265fe;
+    padding: 6px 10px;
+    border-radius: 50px;
   }
 </style>
